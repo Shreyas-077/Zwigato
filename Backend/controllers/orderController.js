@@ -3,10 +3,19 @@ import userModel from "../models/userModel.js";
 import Razorpay from "razorpay"
 import "dotenv/config"
 
+// Support a few common env var names and provide a clear error if missing.
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_ID_KEY || process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_SECRET_KEY || process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET;
 
-const razorpay =new Razorpay({
-    key_id:process.env.RAZORPAY_ID_KEY,
-    key_secret:process.env.RAZORPAY_SECRET_KEY
+if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+    throw new Error(
+        "Razorpay API keys are missing. Please set RAZORPAY_ID_KEY and RAZORPAY_SECRET_KEY (or RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET) in your environment or in backend/.env"
+    );
+}
+
+const razorpay = new Razorpay({
+    key_id: RAZORPAY_KEY_ID,
+    key_secret: RAZORPAY_KEY_SECRET,
 });
 
 

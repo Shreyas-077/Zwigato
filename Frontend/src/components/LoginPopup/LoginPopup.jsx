@@ -20,25 +20,32 @@ const LoginPopup = ({setShowLogin}) => {
         setData(data=>({...data,[name]:value}))
     }
 
-    const onLogin=async(event)=>{
+    const onLogin = async (event) => {
         event.preventDefault();
-        let newUrl=url;
-        if(currState==="Login"){
-            newUrl+="/api/user/login"
+        let newUrl = url;
+        if (currState === "Login") {
+            newUrl += "/api/user/login"
         }
-        else{
-            newUrl+="/api/user/register"
+        else {
+            newUrl += "/api/user/register"
         }
 
-        const response=await axios.post(newUrl,data);
+        // Helpful debug log so you can see the exact API endpoint the frontend is calling
+    console.log('Auth request ->', newUrl, data);
 
-        if(response.data.success){
-            setToken(response.data.token);
-            localStorage.setItem("token",response.data.token);
-            setShowLogin(false)
-        }
-        else{
-            alert(response.data.message)
+    try {
+        const response = await axios.post(newUrl, data);
+
+        if (response.data && response.data.success) {
+                setToken(response.data.token);
+                localStorage.setItem("token", response.data.token);
+                setShowLogin(false)
+            } else {
+                alert(response.data?.message || 'Login/Register failed');
+            }
+        } catch (err) {
+            console.error('Network or server error on login/register', err);
+            alert('Network error: ' + (err.response?.data?.message || err.message));
         }
     }
 
